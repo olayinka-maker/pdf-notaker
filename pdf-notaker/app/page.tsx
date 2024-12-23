@@ -19,9 +19,9 @@ export default function Home() {
 
    const checkUser = async () => {
       const result = await createUser({
-         email: user?.user?.primaryEmailAddress?.emailAddress,
-         userName: user?.user?.fullName,
-         imageUrl:user?.user?.imageUrl
+         email: user?.user?.primaryEmailAddress?.emailAddress ?? "unknown",
+         userName: user?.user?.fullName ?? "unknown",
+         imageUrl:user?.user?.imageUrl ?? "unknown"
          
       })
       console.log(result);

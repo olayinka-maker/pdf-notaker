@@ -17,7 +17,9 @@ import { DialogClose } from "@radix-ui/react-dialog";
 import { useMutation } from "convex/react";
 import { randomUUID } from "crypto";
 import { Loader } from "lucide-react";
-import { useState } from "react";
+import { useState, ChangeEvent } from "react";
+import { v4 as uuidv4 } from 'uuid';
+
 
 export function DialogDemo({
     children,
@@ -29,6 +31,10 @@ export function DialogDemo({
     const [file, SetFile] = useState<File | null>(null);
     const addFiletoDb = useMutation(api.fileStorage.uploadFileToDb)
     const [loading, setLoading]= useState(false)
+    const [fileName, SetFileName] = useState<string>("")
+
+    const fileId = uuidv4()
+    const user = useUser()
 
     const onSelectFile = (event: React.ChangeEvent<HTMLInputElement>) => {
       if (event.target.files && event.target.files.length > 0) {
@@ -48,16 +54,16 @@ export function DialogDemo({
       const { storageId } = await result.json();
       console.log("storage Id :", storageId );
 
-      const fileId = randomUUID()
-      const user = useUser()
+     
 
       const response = await addFiletoDb({
-        fileId:fileId,
-        StorageId:storageId,
-        fileName: file?.name,
-        createdBy: user?.user?.primaryEmailAddress?.emailAddress,
-        
-     })
+        fileId: fileId,
+        StorageId: storageId,
+        fileName: fileName ?? "Untitled File",
+        createdBy: user?.user?.primaryEmailAddress?.emailAddress ?? "unknown",
+      });
+      
+      console.log(response);
       
         setLoading(false)
     }
@@ -92,6 +98,7 @@ export function DialogDemo({
               File Name*
             </Label>
             <Input
+            onChange={(e:ChangeEvent<HTMLInputElement>)=>SetFileName(e.target.value)}
               id="username"
               defaultValue="@peduarte"
               className="col-span-3"
