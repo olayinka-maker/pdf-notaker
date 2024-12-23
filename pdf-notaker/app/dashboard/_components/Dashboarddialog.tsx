@@ -12,8 +12,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { api } from "@/convex/_generated/api";
 import { generateUploadUrl, uploadFileToDb } from "@/convex/fileStorage";
+import { useUser } from "@clerk/nextjs";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { useMutation } from "convex/react";
+import { randomUUID } from "crypto";
 import { Loader } from "lucide-react";
 import { useState } from "react";
 
@@ -45,6 +47,17 @@ export function DialogDemo({
       });
       const { storageId } = await result.json();
       console.log("storage Id :", storageId );
+
+      const fileId = randomUUID()
+      const user = useUser()
+
+      const response = await addFiletoDb({
+        fileId:fileId,
+        StorageId:storageId,
+        fileName: file?.name,
+        createdBy: user?.user?.primaryEmailAddress?.emailAddress,
+        
+     })
       
         setLoading(false)
     }
