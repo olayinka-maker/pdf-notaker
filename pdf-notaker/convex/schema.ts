@@ -14,6 +14,7 @@ export default defineSchema({
     pdfFiles:defineTable({
         fileId:v.string(),
         StorageId:v.string(),
+        fileUrl:v.string(),
         fileName :v.string(),
         createdBy:v.string()
     })

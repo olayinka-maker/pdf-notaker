@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { api } from "@/convex/_generated/api";
-import { generateUploadUrl, uploadFileToDb } from "@/convex/fileStorage";
+import { generateUploadUrl, getFileUrl, uploadFileToDb } from "@/convex/fileStorage";
 import { useUser } from "@clerk/nextjs";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { useMutation } from "convex/react";
@@ -30,6 +30,7 @@ export function DialogDemo({
     const generateUploadUrl = useMutation(api.fileStorage.generateUploadUrl);
     const [file, SetFile] = useState<File | null>(null);
     const addFiletoDb = useMutation(api.fileStorage.uploadFileToDb)
+    const getFileUrl = useMutation(api.fileStorage.getFileUrl)
     const [loading, setLoading]= useState(false)
     const [fileName, SetFileName] = useState<string>("")
 
@@ -53,6 +54,8 @@ export function DialogDemo({
       });
       const { storageId } = await result.json();
       console.log("storage Id :", storageId );
+      const fileLink = await getFileUrl({storageId:storageId})
+
 
      
 
@@ -61,6 +64,7 @@ export function DialogDemo({
         StorageId: storageId,
         fileName: fileName ?? "Untitled File",
         createdBy: user?.user?.primaryEmailAddress?.emailAddress ?? "unknown",
+        fileUrl:fileLink ?? "unknown"
       });
       
       console.log(response);

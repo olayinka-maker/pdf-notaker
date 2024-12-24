@@ -32,6 +32,7 @@ export default function Home() {
   return (
    <div>
     <h1>Pdf note Taker </h1>
+    <p>Hello world</p>
    </div>
   );
 }
