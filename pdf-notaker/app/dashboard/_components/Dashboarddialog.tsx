@@ -14,11 +14,13 @@ import { api } from "@/convex/_generated/api";
 import { generateUploadUrl, getFileUrl, uploadFileToDb } from "@/convex/fileStorage";
 import { useUser } from "@clerk/nextjs";
 import { DialogClose } from "@radix-ui/react-dialog";
-import { useMutation } from "convex/react";
+import { useAction, useMutation } from "convex/react";
 import { randomUUID } from "crypto";
 import { Loader } from "lucide-react";
 import { useState, ChangeEvent } from "react";
+import axios from "axios";
 import { v4 as uuidv4 } from 'uuid';
+import { myActions} from ".../convex/myActions"
 
 
 export function DialogDemo({
@@ -28,6 +30,7 @@ export function DialogDemo({
   }>) {
 
     const generateUploadUrl = useMutation(api.fileStorage.generateUploadUrl);
+    const embeddedDocument = useAction(myActions)
     const [file, SetFile] = useState<File | null>(null);
     const addFiletoDb = useMutation(api.fileStorage.uploadFileToDb)
     const getFileUrl = useMutation(api.fileStorage.getFileUrl)
@@ -44,30 +47,34 @@ export function DialogDemo({
     }
 
     const UploadSelectedFile = async () =>{
-      setLoading(true)
-      const postUrl = await generateUploadUrl();
+      // setLoading(true)
+      // const postUrl = await generateUploadUrl();
 
-      const result = await fetch(postUrl, {
-        method: "POST",
-        headers: { "Content-Type": file!.type },
-        body: file,
-      });
-      const { storageId } = await result.json();
-      console.log("storage Id :", storageId );
-      const fileLink = await getFileUrl({storageId:storageId})
+      // const result = await fetch(postUrl, {
+      //   method: "POST",
+      //   headers: { "Content-Type": file!.type },
+      //   body: file,
+      // });
+      // const { storageId } = await result.json();
+      // console.log("storage Id :", storageId );
+      // const fileLink = await getFileUrl({storageId:storageId})
 
 
      
 
-      const response = await addFiletoDb({
-        fileId: fileId,
-        StorageId: storageId,
-        fileName: fileName ?? "Untitled File",
-        createdBy: user?.user?.primaryEmailAddress?.emailAddress ?? "unknown",
-        fileUrl:fileLink ?? "unknown"
-      });
+      // const response = await addFiletoDb({
+      //   fileId: fileId,
+      //   StorageId: storageId,
+      //   fileName: fileName ?? "Untitled File",
+      //   createdBy: user?.user?.primaryEmailAddress?.emailAddress ?? "unknown",
+      //   fileUrl:fileLink ?? "unknown"
+      // });
       
-      console.log(response);
+      // console.log(response);
+
+      const apiRes = await axios.get('/api/pdf-loader')
+      console.log(apiRes.data.message);
+      
       
         setLoading(false)
     }
@@ -87,7 +94,7 @@ export function DialogDemo({
         <div className="grid gap-4 py-4">
           <div className="">
             <Label htmlFor="file" className=" text-gray-400 text-right">
-            Select a file to upload
+                 Upload a File
             </Label>
             <Input
               id="file"
