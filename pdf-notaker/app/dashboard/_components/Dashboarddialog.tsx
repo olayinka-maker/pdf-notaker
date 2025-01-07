@@ -20,7 +20,8 @@ import { Loader } from "lucide-react";
 import { useState, ChangeEvent } from "react";
 import axios from "axios";
 import { v4 as uuidv4 } from 'uuid';
-import { myActions} from ".../convex/myActions"
+// import{ myAction} from "@/convex/myAction";
+
 
 
 export function DialogDemo({
@@ -30,8 +31,7 @@ export function DialogDemo({
   }>) {
 
     const generateUploadUrl = useMutation(api.fileStorage.generateUploadUrl);
-    const embeddedDocument = useAction(myActions)
-    const [file, SetFile] = useState<File | null>(null);
+    const embeddedDocument = useAction(api.myAction.ingest)
     const addFiletoDb = useMutation(api.fileStorage.uploadFileToDb)
     const getFileUrl = useMutation(api.fileStorage.getFileUrl)
     const [loading, setLoading]= useState(false)
@@ -42,7 +42,7 @@ export function DialogDemo({
 
     const onSelectFile = (event: React.ChangeEvent<HTMLInputElement>) => {
       if (event.target.files && event.target.files.length > 0) {
-        SetFile(event.target.files[0]);
+        SetFileName(event.target.files[0].name);
       }
     }
 
@@ -71,12 +71,18 @@ export function DialogDemo({
       // });
       
       // console.log(response);
-
-      const apiRes = await axios.get('/api/pdf-loader')
-      console.log(apiRes.data.message);
-      
-      
+      setLoading(true)
+      try {
+        const apiRes = await axios.get('/api/pdf-loader')
+        console.log('API Response:', apiRes.data.message);
+        
+        await embeddedDocument({})
+        console.log('Document embedded successfully');
+      } catch (error) {
+        console.error('Error uploading file:', error);
+      } finally {
         setLoading(false)
+      }
     }
 
 
