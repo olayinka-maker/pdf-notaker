@@ -21,9 +21,9 @@ export async function GET(
     const loader = new WebPDFLoader(data)
     const docs = await loader.load()
 
-    let pdfTextContent = ""
+    let pdfTextContentData= ""
     for (const doc of docs) {
-        pdfTextContent += doc.pageContent
+        pdfTextContentData += doc.pageContent
     }
 
     // split the text content into smaller  chunks
